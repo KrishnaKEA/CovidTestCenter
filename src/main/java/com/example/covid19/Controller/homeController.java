@@ -62,6 +62,7 @@ public class homeController {
         userAppointment = "";
         String appointmentTestCenterName = "";
 
+
         List<Appointment> allAppointments = serviceInterface.fetchAllAppointments();
         Date myDate = new Date();
         SimpleDateFormat formatter = new SimpleDateFormat("dd/MM/yyyy");
@@ -396,11 +397,16 @@ public class homeController {
     @GetMapping("/takeDate")
     public String getDateTime(@ModelAttribute DateAndTime dt, Model model) {
         System.out.println(dt.toString());
+
         String cpr = dt.getCpr();
         Date dateM = dt.getMydate();
         String timeM = dt.getTime();
+
+
         model.addAttribute("dateM", dateM);
         model.addAttribute("timeM", timeM);
+
+
         SimpleDateFormat formatter = new SimpleDateFormat("dd/MM/yyyy");
         String strDate = formatter.format(dateM);
         String day = strDate.substring(0, 2);
@@ -408,21 +414,27 @@ public class homeController {
         String year = strDate.substring(6);
         String hour = timeM.substring(0, 2);
         String minute = timeM.substring(3);
+
+
         String receivedDate = year + "-" + month + "-" + day + " " + hour + ":" + minute + ":00";
+
         String str = (year + "-" + month + "-" + day + " " + hour + ":" + minute);
         DateTimeFormatter dtf = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm");
         LocalDateTime dateTime = LocalDateTime.parse(str, dtf);
 
         List<Appointment> appList = serviceInterface.fetchAllAppointments();
         model.addAttribute("appList", appList);
+
         String cprError = "You have already an appointment on";
         String timeMatch = "This time has already been taken by someone else please take another time. ";
 
         for (int i = 0; i < appList.size(); i++) {
             if (appList.get(i).getCpr().equals(cpr1)) {
                 model.addAttribute("cprError", cprError);
+
                 currentAppointment = " " + appList.get(i).getLocalDateTime().toString() + " ";
                 model.addAttribute("bookedAppointment", currentAppointment);
+
                 model.addAttribute("appointmentTestCenterName", appointmentTestCenterName);
                 return "home/makeAppointment";
 
@@ -439,50 +451,7 @@ public class homeController {
     }
 
     // appointment by admin or secretary
-    @GetMapping("/DirectAppointment")
-    public String makeDirectAppointment(@ModelAttribute DateAndTime dt, Model model) {
 
-        String cpr = dt.getCpr();
-        Date dateM = dt.getMydate();
-        String timeM = dt.getTime();
-        int tcID = dt.getTcID();
-        model.addAttribute("dateM", dateM);
-        model.addAttribute("timeM", timeM);
-        SimpleDateFormat formatter = new SimpleDateFormat("dd/MM/yyyy");
-        String strDate = formatter.format(dateM);
-        String day = strDate.substring(0, 2);
-        String month = strDate.substring(3, 5);
-        String year = strDate.substring(6);
-        String hour = timeM.substring(0, 2);
-        String minute = timeM.substring(3);
-        String receivedDate = year + "-" + month + "-" + day + " " + hour + ":" + minute + ":00";
-        String str = (year + "-" + month + "-" + day + " " + hour + ":" + minute);
-        DateTimeFormatter dtf = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm");
-        LocalDateTime dateTime = LocalDateTime.parse(str, dtf);
-        List<Appointment> appList = serviceInterface.fetchAllAppointments();
-        model.addAttribute("appList", appList);
-        String cprError = "You have already an appointment on";
-        String timeMatch = "This time has already been taken by someone else please take another time. ";
-
-        for (int i = 0; i < appList.size(); i++) {
-            if (appList.get(i).getCpr().equals(cpr)) {
-                model.addAttribute("cprError", cprError);
-                currentAppointment = appList.get(i).getLocalDateTime().toString();
-                //currentAppointment = appList.get(i).getDay()+"-"+appList.get(i).getMonth()+"-"+appList.get(i).getYear()+" at "+appList.get(i).getHour()+":"+ appList.get(i).getMinute();
-                model.addAttribute("bookedAppointment", currentAppointment);
-                return "secretary/makeDirectAppointment";
-
-            } else if (appList.get(i).getLocalDateTime().toString().equals(receivedDate) && appList.get(i).getTcID() == tcID) {
-                model.addAttribute("timeMatch", timeMatch);
-                return "secretary/makeDirectAppointment";
-            } else {
-                continue;
-            }
-        }
-
-        serviceInterface.addAppointment(cpr, tcID, dateTime);
-        return "secretary/secretaryDash";
-    }
 
     // Login check
     public boolean logIncheck1(String userName, String password) {
@@ -512,12 +481,6 @@ public class homeController {
     }
 
 
-    @GetMapping("/makeDirectAppointment")
-    public String showDirectAppointment(Model model) {
-        List<TimeSlots> mytimeSlots = serviceInterface.fetchAllTimeSlots();
-        model.addAttribute("timeSlots", mytimeSlots);
-        return "secretary/makeDirectAppointment";
-    }
 
     @GetMapping("/delete/{id}")
     public String deleteMe(@PathVariable(value = "id") int id) {
@@ -722,18 +685,6 @@ public class homeController {
         model.addAttribute("searchListCpr", searchListCpr);
         return "administrator/searchByNameA";
     }
-
-
-
-
-
-
-
-
-
-
-
-
 
 
 

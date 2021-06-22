@@ -111,5 +111,22 @@
 
 
 </div>
+
+<!---- Source of inspiration http://jsfiddle.net/Shef/k2dHP/ --->
+<script>
+    $("#name").keyup(function(){
+        var nameInput=$(this).val();
+        $(this).val(nameInput.replace(/[^A-Za-z]/g,''));
+    })
+    $("#cpr").keyup(function(){
+        var cprInput=$(this).val();
+        $(this).val(cprInput.replace(/[^0-9]/g,''),
+            $(this).val(cprInput.substring(0,10) )
+        );
+    })
+</script>
+
+
+
 </body>
 </html>
